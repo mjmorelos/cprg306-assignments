@@ -26,10 +26,10 @@ export default function Page(){
                 <h2 className="text-4x1 font-bold mb-4 text-lg">Shopping List</h2>
                 <NewItem onAddItem={handleAddItem}/>
                 <ItemList items={items} onItemSelect={handleItemSelect}/> 
-                <p>Selected ingredient: {selectedItemName}</p> 
+                <p>Selected ingredient: {selectedItemName || "No ingredient selected" }</p> 
             </div>
             <div className="w-1/2 pl-4">
-                <MealIdeas ingredient={selectedItemName} />
+            {selectedItemName && <MealIdeas ingredient={selectedItemName} />}
             </div>
         </main>
     )
