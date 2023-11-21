@@ -4,12 +4,11 @@ import ItemList from "./item-list";
 import NewItem from "./new-item";
 import itemsData from "./items.json";
 import MealIdeas from "./meal-ideas"; // Import the new MealIdeas component
-
+import { useUserAuth } from "./user-auth"; // Import the useUserAuth hook
 
 export default function Page(){
     const [items, setItems] = useState(itemsData);
     const [selectedItemName, setSelectedItemName] = useState(""); // Add new state variable
-    const user = useUserAuth();
 
     const handleAddItem = (newItem) => {
         setItems([...items, newItem]);
@@ -21,10 +20,6 @@ export default function Page(){
         const cleanedItemName = itemName.trim();
         setSelectedItemName(cleanedItemName);
     };
-
-    if (!user) {
-        return <Redirect to="/" />;
-    }
 
     return(
         <main className="p-2 flex">
