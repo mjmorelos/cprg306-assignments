@@ -1,17 +1,26 @@
 "use client";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import ItemList from "./item-list";
 import NewItem from "./new-item";
-import itemsData from "./items.json";
 import MealIdeas from "./meal-ideas"; // Import the new MealIdeas component
 import { useUserAuth } from "./user-auth"; // Import the useUserAuth hook
+import getItems from "./_services/shopping-list-service"; // Import the getItems function
+import addItem from "./_services/shopping-list-service"; // Import the addItem function
 
 export default function Page(){
-    const [items, setItems] = useState(itemsData);
+    const [items, setItems] = useState([]);
     const [selectedItemName, setSelectedItemName] = useState(""); // Add new state variable
+    const { user } = useUserAuth();
 
-    const handleAddItem = (newItem) => {
-        setItems([...items, newItem]);
+    const handleAddItem = async (newItem) => {
+        try {
+            const userId = user.uid;
+            const addedItem = await addItem(userId, newItem);
+            const updatedItems = [...items, { ...addedItem, id: addedItem.id }];
+            setItems(updatedItems);
+        } catch (error) {
+            console.error("Error adding item:", error);
+        }
     }
 
     const handleItemSelect = (selectedItem) => { // Add new event handler
@@ -20,6 +29,20 @@ export default function Page(){
         const cleanedItemName = itemName.trim();
         setSelectedItemName(cleanedItemName);
     };
+
+    const loadItems = async () => {
+        try {
+            const userId = user.uid;
+            const result = await getItems(userId);
+            setItems(result);
+        } catch (error) {
+            console.error("Error loading items:", error);
+        }
+    };
+
+    useEffect(() => {
+        loadItems();
+    }, []);
 
     return(
         <main className="p-2 flex">
