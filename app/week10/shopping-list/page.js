@@ -1,26 +1,19 @@
 "use client";
-import {useState, useEffect} from "react";
+import {useState} from "react";
 import ItemList from "./item-list";
 import NewItem from "./new-item";
 import MealIdeas from "./meal-ideas"; // Import the new MealIdeas component
-import { useUserAuth } from "./user-auth"; // Import the useUserAuth hook
-import getItems from "./_services/shopping-list-service"; // Import the getItems function
-import addItem from "./_services/shopping-list-service"; // Import the addItem function
+import { useUserAuth } from "../_utils/auth-context"; // Import the useUserAuth hook
+import getItems from "../_services/shopping-list-service"; // Import the getItems function
+import addItem from "../_services/shopping-list-service"; // Import the addItem function
+import { useEffect } from "react";
 
 export default function Page(){
-    const [items, setItems] = useState([]);
+    const [items, setItems] = useState(itemsData);
     const [selectedItemName, setSelectedItemName] = useState(""); // Add new state variable
-    const { user } = useUserAuth();
 
-    const handleAddItem = async (newItem) => {
-        try {
-            const userId = user.uid;
-            const addedItem = await addItem(userId, newItem);
-            const updatedItems = [...items, { ...addedItem, id: addedItem.id }];
-            setItems(updatedItems);
-        } catch (error) {
-            console.error("Error adding item:", error);
-        }
+    const handleAddItem = (newItem) => {
+        setItems([...items, newItem]);
     }
 
     const handleItemSelect = (selectedItem) => { // Add new event handler
@@ -29,20 +22,6 @@ export default function Page(){
         const cleanedItemName = itemName.trim();
         setSelectedItemName(cleanedItemName);
     };
-
-    const loadItems = async () => {
-        try {
-            const userId = user.uid;
-            const result = await getItems(userId);
-            setItems(result);
-        } catch (error) {
-            console.error("Error loading items:", error);
-        }
-    };
-
-    useEffect(() => {
-        loadItems();
-    }, []);
 
     return(
         <main className="p-2 flex">
@@ -57,4 +36,15 @@ export default function Page(){
             </div>
         </main>
     )
+    
+}
+async function loadItems() {
+    try {
+        const user = useUserAuth(); // Get the current user
+        const userId = user.uid; // Get the user ID
+        const items = await getItems(userId); // Call the getItems function with the user ID
+        setItems(items); // Set the state of items to the result of getItems
+    } catch (error) {
+        console.error("Error loading items:", error);
+    }
 }

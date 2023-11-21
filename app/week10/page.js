@@ -67,7 +67,9 @@ const LandingPage = () => {
         <div>
           <p>Welcome, {user.displayName} ({user.email})</p>
           <button onClick={handleSignOut} style={buttonStyle}>Log Out</button>
-          <a href="/shopping-list" style={buttonStyle}>Go to Shopping List</a>
+          <a href="/week10/shopping-list" style={buttonStyle}>Go to Shopping List</a>
+
+
         </div>
       ) : (
         <div>
